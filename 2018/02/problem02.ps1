@@ -1,29 +1,29 @@
 $path = '.\input.data'
 $data = Get-Content -Path $path
 
-$frequencyMap = [System.Collections.Generic.HashSet[int]]::new()
-$frequency = 0
-:mainLoop while ($true)
+:mainLoop foreach($primary in $data)
 {
-    Write-Verbose "looping again" -Verbose
-    foreach ($line in ($data * 20))
-    {
-        #Write-Verbose "[$line]" -Verbose
-        [int]$value = 0
-        if ([int]::TryParse($line, [ref]$value))
+    :secondLoop foreach($secondary in $data)
+    { # O(n^2)
+        $diffCount = 0
+        $diffIndex = 0
+        for($index = 0; $index -lt $primary.length; $index++)
         {
-            $frequency += $value
-            #Write-Verbose "  F [$frequency]" -Verbose
-            if ( -not ( $frequencyMap.Add($frequency) ) )
+            if($primary[$index] -ne $secondary[$index])
             {
-                Write-Verbose "  Duplicate found" -Verbose
-                break mainLoop
+                $diffCount++
+                $diffIndex = $index
+                if($diffCount -gt 1)
+                {
+                    continue secondLoop
+                }
             }
         }
-        else
+        if ($diffCount -eq 1)
         {
-            throw 'Parsing error'
+            break mainLoop
         }
     }
 }
-$frequency
+
+# xpysnnkqrbuhefmcajodplyzw
